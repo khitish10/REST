@@ -37,10 +37,12 @@ public class Basics {
 		System.out.println(place_id);
 		
 		//Update Place
+		String updatedPlace="70 Street Summer walk, Mexico";
+		
 		given().log().all().queryParam("key", "qaclick123").header("Content-Type","application/json")
 		.body("{\r\n"
 				+ "\"place_id\":\""+place_id+"\",\r\n"//Update the place id value from above stored string
-				+ "\"address\":\"70 Street Summer walk, Mexico\",\r\n"
+				+ "\"address\":\""+updatedPlace+"\",\r\n"
 				+ "\"key\":\"qaclick123\"\r\n"
 				+ "}\r\n"
 				+ "")
@@ -48,6 +50,14 @@ public class Basics {
 		.then().assertThat().log().all().statusCode(200)
 		.body("msg", equalTo("Address successfully updated"));
 		
+		//Get Place
+		String getResponsePlace = given().log().all().queryParam("key", "qaclick123").queryParam("place_id", place_id)//No header since Get request we dont have request body
+		.when().get("maps/api/place/get/json")
+		.then().log().all().statusCode(200).extract().response().asString();
+		
+		JsonPath json1=new JsonPath(getResponsePlace);
+		String actualAddress = json1.getString("address");
+		System.out.println(actualAddress);
 		
 		
 		
