@@ -4,7 +4,10 @@ import io.restassured.path.json.JsonPath;
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
+import org.testng.Assert;
+
 import files.Payload;
+import files.Resusable;
 
 public class Basics {
 
@@ -32,7 +35,8 @@ public class Basics {
 		
 		System.out.println(storeResponse);
 		
-		JsonPath json = new JsonPath(storeResponse);//for parsing the Json
+		//JsonPath json = new JsonPath(storeResponse);//for parsing the Json
+		JsonPath json = Resusable.rawToJson(storeResponse);
 		String place_id = json.getString("place_id");//store the place id in a variable
 		System.out.println(place_id);
 		
@@ -55,9 +59,14 @@ public class Basics {
 		.when().get("maps/api/place/get/json")
 		.then().log().all().statusCode(200).extract().response().asString();
 		
-		JsonPath json1=new JsonPath(getResponsePlace);
+		//JsonPath json1=new JsonPath(getResponsePlace);
+		//Optimise JsonPath
+		JsonPath json1 = Resusable.rawToJson(getResponsePlace);
 		String actualAddress = json1.getString("address");
 		System.out.println(actualAddress);
+		
+		//Using TestNG Asserts to check
+		Assert.assertEquals(actualAddress, updatedPlace);
 		
 		
 		
